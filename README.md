@@ -1,16 +1,13 @@
-# sectiontask
+[UI](https://github.com/user-attachments/assets/b6085acf-7518-4dae-85c6-b0ddf2f6dd62)
 
-A new Flutter project.
+---
 
-## Getting Started
+**A simple mobile app section project**
+**Supervised by Eng.Nour Ahmed**
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Some Basic Flutter Commands are:
+```
+flutter clean
+flutter pub get
+flutter run
+```
