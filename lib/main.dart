@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sectiontask/add_item/item_model.dart';
+import 'package:sectiontask/dashboard/dashboard_screen.dart';
+import 'package:sectiontask/dashboard/nav_bar.dart';
+import 'package:sectiontask/profile/user_model.dart';
 
-import 'first_screen.dart';
-import 'home/home_screen/home_page.dart';
+import 'details/details_screen/details_page.dart';
+import 'favorite/favorite_model.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+
+        ChangeNotifierProvider(create: (context) => UserModel(),),
+        ChangeNotifierProvider(create: (context) => ItemModel(),),
+        ChangeNotifierProvider(create: (context) => FavoriteModel(),),
+
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -33,7 +49,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
       ),
-      home: MyHomePage(),
+      home: NavBar(),
     );
   }
 }

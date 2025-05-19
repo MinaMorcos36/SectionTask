@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:sectiontask/profile/user_model.dart';
+import '../profile_widget/options.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -10,18 +13,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  ImagePicker imagePicker = ImagePicker();
-
-  File? selectedImage;
-
-  Future<void> imageSelector(ImageSource source) async {
-    XFile? image = await imagePicker.pickImage(source: source);
-    if (image != null && mounted) {
-      setState(() {
-        selectedImage = File(image!.path);
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,31 +21,33 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Column(
         children: [
           Center(
-            child: Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                CircleAvatar(
-                  radius: 100,
-                  child:
-                      selectedImage == null
+            child: Consumer <UserModel>(
+              builder: (context, userModel, child) {
+                return Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    CircleAvatar(
+                      radius: 100,
+                      child:
+                      userModel.user?.image == null
                           ? Icon(Icons.person, size: 200)
                           : ClipOval(
-                            child: Image.file(
-                              height: 200,
-                              width: 200,
-                              fit: BoxFit.cover,
-                              selectedImage!,
-                            ),
-                          ),
-                ),
-                CircleAvatar(
-                  radius: 25,
-                  child: IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder:
-                            (context) => SizedBox(
+                        child: Image.file(
+                          height: 200,
+                          width: 200,
+                          fit: BoxFit.cover,
+                          userModel.user!.image!,
+                        ),
+                      ),
+                    ),
+                    CircleAvatar(
+                      radius: 25,
+                      child: IconButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder:
+                                (context) => SizedBox(
                               height: 150,
                               child: Column(
                                 children: [
@@ -65,11 +58,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Divider(),
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Options(
                                         onPressed: () {
-                                          imageSelector(ImageSource.camera);
+                                          userModel.imageSelector(ImageSource.camera);
                                           Navigator.pop(context);
                                         },
                                         title: 'Camera',
@@ -77,21 +70,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                       Options(
                                         onPressed: () {
-                                          imageSelector(ImageSource.gallery);
+                                          userModel.imageSelector(ImageSource.gallery);
                                           Navigator.pop(context);
                                         },
                                         title: 'Gallery',
                                         icon: Icons.image,
                                       ),
-                                      if (selectedImage != null)
+                                      if (userModel.user?.image != null)
                                         Options(
-                                          selectedImage: selectedImage,
+                                          selectedImage: userModel.user?.image,
                                           onPressed: () {
-                                            if (mounted) {
-                                              setState(() {
-                                                selectedImage = null;
-                                              });
-                                            }
+                                            userModel.removeImage();
                                             Navigator.pop(context);
                                           },
                                           title: 'Delete Photo',
@@ -102,13 +91,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ],
                               ),
                             ),
-                      );
-                    },
-                    icon: Icon(Icons.camera_alt),
-                    iconSize: 40,
-                  ),
-                ),
-              ],
+                          );
+                        },
+                        icon: Icon(Icons.camera_alt),
+                        iconSize: 40,
+                      ),
+                    ),
+                  ],
+                );
+              },
+
             ),
           ),
         ],
@@ -117,35 +109,3 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-class Options extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  Colors? color;
-
-  File? selectedImage;
-
-  final VoidCallback onPressed;
-
-  Options({
-    this.selectedImage,
-    this.color,
-    required this.onPressed,
-    required this.title,
-    required this.icon,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        IconButton(
-          color: selectedImage == null ? Colors.black : Colors.red,
-          onPressed: onPressed,
-          icon: Icon(icon),
-        ),
-        Text(title),
-      ],
-    );
-  }
-}
